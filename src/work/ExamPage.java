@@ -32,6 +32,7 @@ public class ExamPage extends JFrame {
 	Statement st;
 	String correctOption;
 	int points;
+	ResultSet rs = null;
 
 	ArrayList<JRadioButton> buttons = new ArrayList<>();
 
@@ -68,7 +69,12 @@ public class ExamPage extends JFrame {
 		submit.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				JOptionPane.showMessageDialog(null, "Answer: " + bg.getSelection());
+				try {
+					populateQuestion(rs);
+				} catch (SQLException e1) {
+					e1.printStackTrace();
+				}
+//				JOptionPane.showMessageDialog(null, "Answer: " + bg.getSelection());
 			}
 		});
 
@@ -93,39 +99,45 @@ public class ExamPage extends JFrame {
 		new ExamPage();
 	}
 
-	public void loadQuestion() {
-		ResultSet rs = null;
+	private void loadQuestion() {
+		
 		String query = "SELECT * FROM Questions";
 		try {
 			rs = st.executeQuery(query);
 
-			if (rs.next()) {
-
-				String question = rs.getString("Questions");
-				correctOption = rs.getString("correctOption");
-				String option2 = rs.getString("Option2");
-				String option3 = rs.getString("Option3");
-				String option4 = rs.getString("Option4");
-				points = rs.getInt("points");
-
-				questionTxt.setText(question);
-
-				String[] options = { correctOption, option2, option3, option4 };
-				ArrayList<String> optionsList = new ArrayList<>(Arrays.asList(options));
-
-				for (JRadioButton btn : buttons) {
-					Collections.shuffle(optionsList);
-					String option = optionsList.get(0);
-					btn.setText(option);
-					optionsList.remove(0);
-				}
-
-			}
+			populateQuestion(rs);
 
 		} catch (SQLException e) {
 			JOptionPane.showMessageDialog(null, "Message: \n" + e.getMessage());
 		}
 
+	}
+
+	private void populateQuestion(ResultSet rs) throws SQLException {
+		if (rs.next()) {
+
+			String question = rs.getString("Questions");
+			correctOption = rs.getString("correctOption");
+			String option2 = rs.getString("Option2");
+			String option3 = rs.getString("Option3");
+			String option4 = rs.getString("Option4");
+			points = rs.getInt("points");
+
+			questionTxt.setText(question);
+
+			String[] options = { correctOption, option2, option3, option4 };
+			ArrayList<String> optionsList = new ArrayList<>(Arrays.asList(options));
+
+			for (JRadioButton btn : buttons) {
+				Collections.shuffle(optionsList);
+				String option = optionsList.get(0);
+				btn.setText(option);
+				optionsList.remove(0);
+			}
+
+		} else {
+			loadQuestion();
+		}
 	}
 
 	public JRadioButton createRadio() {

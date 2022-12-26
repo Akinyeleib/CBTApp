@@ -12,10 +12,9 @@ public class Loader {
 		String url = "jdbc:mysql://localhost:3306/CBTAPP";
 
 		try {
-			System.out.println("Hello...1");
 			Connection conn = DriverManager.getConnection(url, uname, password);
 			
-			System.out.println("Hello...2");
+			System.out.println("Connection Successful...");
 			return conn;
 
 		} catch (Exception e) {
