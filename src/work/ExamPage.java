@@ -33,9 +33,9 @@ public class ExamPage extends JFrame {
 	Connection conn;
 	Statement st;
 	String correctOption, userOption;
-	int points;
+	int points, pointsGained = 0, totalPoints = 0;
 	ResultSet rs = null;
-
+	
 
 	ArrayList<JRadioButton> buttons = new ArrayList<>();
 
@@ -54,13 +54,12 @@ public class ExamPage extends JFrame {
 		questionPanel.add(questionTxt);
 
 		bg = new ButtonGroup();
-		
+
 		option1 = createRadio();
 		option2 = createRadio();
 		option3 = createRadio();
 		option4 = createRadio();
-		
-		
+
 		answerPanel = new JPanel();
 		answerPanel.setLayout(new GridLayout(4, 1));
 		answerPanel.add(option1);
@@ -72,12 +71,17 @@ public class ExamPage extends JFrame {
 		submit.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				if (userOption.equals("")) {
+					JOptionPane.showMessageDialog(null, "Select an answer");
+					return;
+				}
 				try {
+					if (userOption.equals(correctOption)) 
+						pointsGained += points;
 					populateQuestion(rs);
 				} catch (SQLException e1) {
-					e1.printStackTrace();
+					JOptionPane.showMessageDialog(null, e1.getMessage());
 				}
-//				JOptionPane.showMessageDialog(null, "Answer: " + bg.getSelection());
 			}
 		});
 
@@ -104,6 +108,9 @@ public class ExamPage extends JFrame {
 
 	private void loadQuestion() {
 		
+		pointsGained = 0;
+		totalPoints = 0;
+
 		String query = "SELECT * FROM Questions";
 		try {
 			rs = st.executeQuery(query);
@@ -117,6 +124,7 @@ public class ExamPage extends JFrame {
 	}
 
 	private void populateQuestion(ResultSet rs) throws SQLException {
+
 		if (rs.next()) {
 
 			String question = rs.getString("Questions");
@@ -126,9 +134,11 @@ public class ExamPage extends JFrame {
 			String option4 = rs.getString("Option4");
 			points = rs.getInt("points");
 
+			totalPoints += points;
+			
 			questionTxt.setText(question);
 
-			String[] options = { correctOption, option2, option3, option4 };
+			String [] options = { correctOption, option2, option3, option4 };
 			ArrayList<String> optionsList = new ArrayList<>(Arrays.asList(options));
 
 			for (JRadioButton btn : buttons) {
@@ -137,18 +147,24 @@ public class ExamPage extends JFrame {
 				btn.setText(option);
 				optionsList.remove(0);
 			}
+			bg.clearSelection();
+			userOption = "";
 
 		} else {
+//			String line1 = "";
+			double res = (double) pointsGained / totalPoints * 100;
+			JOptionPane.showMessageDialog(null, "Result is: " + res + "%");
 			loadQuestion();
 		}
+
 	}
 
-	public JRadioButton createRadio() {
+	private JRadioButton createRadio() {
 		JRadioButton btn = new JRadioButton();
 		buttons.add(btn);
 		bg.add(btn);
 		btn.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				userOption = e.getActionCommand();
