@@ -11,6 +11,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.regex.Pattern;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -82,6 +83,7 @@ public class AddQuestion extends JFrame {
 		submit.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+
 				String the_question = question.getText();
 				String optA = correctOption.getText();
 				String optB = option2.getText();
@@ -92,10 +94,12 @@ public class AddQuestion extends JFrame {
 				if (the_question.isBlank() || optA.isBlank() || optB.isBlank() || optC.isBlank() || optD.isBlank()
 						|| the_point.isBlank()) {
 					JOptionPane.showMessageDialog(null, "All fields should be filled");
+				} else if (!Pattern.matches("[1-5]", the_point)) {
+					JOptionPane.showMessageDialog(null, "HM go vex o");
 				} else {
 
 					String query = "INSERT INTO Questions VALUES (?, ?, ?, ?, ?, ?);";
-					
+
 					try {
 						pt = conn.prepareStatement(query);
 						pt.setString(1, the_question);
@@ -105,11 +109,11 @@ public class AddQuestion extends JFrame {
 						pt.setString(5, optD);
 						pt.setInt(6, Integer.parseInt(the_point));
 						pt.execute();
-						
+
 //						query = "INSERT INTO Questions VALUES ('A', 'B', 'C', 'D', 'E', 3);";
 //						Statement st = conn.createStatement();
 //						st.execute(query);
-						
+
 						question.setText("");
 						correctOption.setText("");
 						option2.setText("");

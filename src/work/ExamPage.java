@@ -5,11 +5,14 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
@@ -21,6 +24,9 @@ public class ExamPage extends JFrame {
 	ButtonGroup bg;
 	JButton submit;
 
+	ArrayList <JRadioButton> buttons = new ArrayList<>();
+	
+	
 	public ExamPage() {
 
 		question = new JLabel("Question...");
@@ -50,7 +56,7 @@ public class ExamPage extends JFrame {
 		submit.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-
+				JOptionPane.showMessageDialog(null, "Answer: " + bg.getSelection());
 			}
 		});
 
@@ -79,11 +85,26 @@ public class ExamPage extends JFrame {
 		String [] options = {optA, optB, optC, optD};
 		
 		this.question.setText(question);
-		ArrayList <JRadioButton> buttons = new ArrayList<>();
-		buttons.add(option1);
-		buttons.add(option2);
-		buttons.add(option3);
-		buttons.add(option4);
+		ArrayList<String> optionsList = new ArrayList<>(Arrays.asList(options));
+		Collections.shuffle(buttons);
+		Collections.shuffle(optionsList);
+		
+		buttons.get(0).setText(optionsList.get(0));
+		
+		
+	}
+	
+	public JRadioButton createRadio() {
+		JRadioButton btn = new JRadioButton();
+		buttons.add(btn);
+		bg.add(btn);
+		return btn;
+	}
+	
+	public JLabel createLabel() {
+		JLabel label = new JLabel();
+		label.setHorizontalAlignment(JLabel.CENTER);
+		return label;
 	}
 
 }
