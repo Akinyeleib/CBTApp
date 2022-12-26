@@ -4,6 +4,8 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -30,9 +32,10 @@ public class ExamPage extends JFrame {
 	JButton submit;
 	Connection conn;
 	Statement st;
-	String correctOption;
+	String correctOption, userOption;
 	int points;
 	ResultSet rs = null;
+
 
 	ArrayList<JRadioButton> buttons = new ArrayList<>();
 
@@ -90,7 +93,7 @@ public class ExamPage extends JFrame {
 
 		setVisible(true);
 		setTitle("Exam Page");
-		setSize(new Dimension(700, 700));
+		setSize(new Dimension(500, 500));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 	}
@@ -144,6 +147,13 @@ public class ExamPage extends JFrame {
 		JRadioButton btn = new JRadioButton();
 		buttons.add(btn);
 		bg.add(btn);
+		btn.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				userOption = e.getActionCommand();
+			}
+		});
 		return btn;
 	}
 
