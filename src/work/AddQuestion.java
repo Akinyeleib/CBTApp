@@ -35,7 +35,7 @@ public class AddQuestion extends JFrame {
 	public AddQuestion() {
 
 		conn = Loader.loadSql();
-
+		
 		question = MyTextField();
 		question.setText("ertyuiooiuyt");
 
@@ -99,35 +99,39 @@ public class AddQuestion extends JFrame {
 				} else {
 
 					String query = "INSERT INTO Questions VALUES (?, ?, ?, ?, ?, ?);";
+					insertIntoTable(the_question, optA, optB, optC, optD, the_point, query);
 
-					try {
-						pt = conn.prepareStatement(query);
-						pt.setString(1, the_question);
-						pt.setString(2, optA);
-						pt.setString(3, optB);
-						pt.setString(4, optC);
-						pt.setString(5, optD);
-						pt.setInt(6, Integer.parseInt(the_point));
-						pt.execute();
+				}
+
+			}
+
+			private void insertIntoTable(String the_question, String optA, String optB, String optC, String optD,
+					String the_point, String query) {
+				try {
+					pt = conn.prepareStatement(query);
+					pt.setString(1, the_question);
+					pt.setString(2, optA);
+					pt.setString(3, optB);
+					pt.setString(4, optC);
+					pt.setString(5, optD);
+					pt.setInt(6, Integer.parseInt(the_point));
+					pt.execute();
 
 //						query = "INSERT INTO Questions VALUES ('A', 'B', 'C', 'D', 'E', 3);";
 //						Statement st = conn.createStatement();
 //						st.execute(query);
 
-						question.setText("");
-						correctOption.setText("");
-						option2.setText("");
-						option3.setText("");
-						option4.setText("");
-						points.setText("");
+					question.setText("");
+					correctOption.setText("");
+					option2.setText("");
+					option3.setText("");
+					option4.setText("");
+					points.setText("");
 
-						JOptionPane.showMessageDialog(null, "Added successfully...");
-					} catch (SQLException ex) {
-						System.out.println(ex.getMessage());
-					}
-
+					JOptionPane.showMessageDialog(null, "Added successfully...");
+				} catch (SQLException ex) {
+					System.out.println(ex.getMessage());
 				}
-
 			}
 		});
 

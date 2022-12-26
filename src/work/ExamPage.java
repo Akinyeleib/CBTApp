@@ -4,6 +4,10 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -15,36 +19,44 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.JTextArea;
 
 public class ExamPage extends JFrame {
 
-	JLabel question;
+	JTextArea questionTxt;
 	JRadioButton option1, option2, option3, option4;
 	JPanel questionPanel, answerPanel, container;
 	ButtonGroup bg;
 	JButton submit;
+	Connection conn;
+	Statement st;
+	String correctOption;
+	int points;
 
-	ArrayList <JRadioButton> buttons = new ArrayList<>();
-	
-	
+	ArrayList<JRadioButton> buttons = new ArrayList<>();
+
 	public ExamPage() {
 
-		question = new JLabel("Question...");
+		conn = Loader.loadSql();
+		try {
+			st = conn.createStatement();
+		} catch (SQLException ex) {
+			System.out.println("Message: " + ex.getMessage());
+		}
+
+		questionTxt = new JTextArea("Question...");
 
 		questionPanel = new JPanel();
-		questionPanel.add(question);
-
-		option1 = new JRadioButton("Option 1");
-		option2 = new JRadioButton("Option 2");
-		option3 = new JRadioButton("Option 3");
-		option4 = new JRadioButton("Option 4");
+		questionPanel.add(questionTxt);
 
 		bg = new ButtonGroup();
-		bg.add(option1);
-		bg.add(option2);
-		bg.add(option3);
-		bg.add(option4);
-
+		
+		option1 = createRadio();
+		option2 = createRadio();
+		option3 = createRadio();
+		option4 = createRadio();
+		
+		
 		answerPanel = new JPanel();
 		answerPanel.setLayout(new GridLayout(4, 1));
 		answerPanel.add(option1);
@@ -68,6 +80,8 @@ public class ExamPage extends JFrame {
 
 		add(container);
 
+		loadQuestion();
+
 		setVisible(true);
 		setTitle("Exam Page");
 		setSize(new Dimension(700, 700));
@@ -80,27 +94,47 @@ public class ExamPage extends JFrame {
 	}
 
 	public void loadQuestion() {
-		String question = "What is the capital of Lagos?";
-		String optA = "Akure", optB = "Lekki", optC = "Banana Island", optD = "Ikeja";
-		String [] options = {optA, optB, optC, optD};
-		
-		this.question.setText(question);
-		ArrayList<String> optionsList = new ArrayList<>(Arrays.asList(options));
-		Collections.shuffle(buttons);
-		Collections.shuffle(optionsList);
-		
-		buttons.get(0).setText(optionsList.get(0));
-		
-		
+		ResultSet rs = null;
+		String query = "SELECT * FROM Questions";
+		try {
+			rs = st.executeQuery(query);
+
+			if (rs.next()) {
+
+				String question = rs.getString("Questions");
+				correctOption = rs.getString("correctOption");
+				String option2 = rs.getString("Option2");
+				String option3 = rs.getString("Option3");
+				String option4 = rs.getString("Option4");
+				points = rs.getInt("points");
+
+				questionTxt.setText(question);
+
+				String[] options = { correctOption, option2, option3, option4 };
+				ArrayList<String> optionsList = new ArrayList<>(Arrays.asList(options));
+
+				for (JRadioButton btn : buttons) {
+					Collections.shuffle(optionsList);
+					String option = optionsList.get(0);
+					btn.setText(option);
+					optionsList.remove(0);
+				}
+
+			}
+
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(null, "Message: \n" + e.getMessage());
+		}
+
 	}
-	
+
 	public JRadioButton createRadio() {
 		JRadioButton btn = new JRadioButton();
 		buttons.add(btn);
 		bg.add(btn);
 		return btn;
 	}
-	
+
 	public JLabel createLabel() {
 		JLabel label = new JLabel();
 		label.setHorizontalAlignment(JLabel.CENTER);
