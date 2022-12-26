@@ -98,6 +98,7 @@ public class ExamPage extends JFrame {
 		setVisible(true);
 		setTitle("Exam Page");
 		setSize(new Dimension(500, 500));
+		setLocationRelativeTo(null);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 	}
@@ -114,6 +115,12 @@ public class ExamPage extends JFrame {
 		String query = "SELECT * FROM Questions";
 		try {
 			rs = st.executeQuery(query);
+			if (!rs.next()) {
+				JOptionPane.showMessageDialog(null, "Table is empty");
+				System.exit(0);
+				return;
+			}
+				
 
 			populateQuestion(rs);
 

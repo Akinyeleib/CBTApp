@@ -35,7 +35,7 @@ public class AddQuestion extends JFrame {
 	public AddQuestion() {
 
 		conn = Loader.loadSql();
-		
+
 		question = MyTextField();
 		question.setText("ertyuiooiuyt");
 
@@ -95,7 +95,10 @@ public class AddQuestion extends JFrame {
 						|| the_point.isBlank()) {
 					JOptionPane.showMessageDialog(null, "All fields should be filled");
 				} else if (!Pattern.matches("[1-5]", the_point)) {
-					JOptionPane.showMessageDialog(null, "HM go vex o");
+					JOptionPane.showMessageDialog(null, "Only values 1 - 5 alloweds");
+				} else if (optA.equals(optB) || optA.equals(optC) || optA.equals(optD)
+						|| optB.equals(optC) || optB.equals(optD) || optC.equals(optD)) {
+					JOptionPane.showMessageDialog(null, "Duplicate options not allowed");
 				} else {
 
 					String query = "INSERT INTO Questions VALUES (?, ?, ?, ?, ?, ?);";
@@ -103,35 +106,6 @@ public class AddQuestion extends JFrame {
 
 				}
 
-			}
-
-			private void insertIntoTable(String the_question, String optA, String optB, String optC, String optD,
-					String the_point, String query) {
-				try {
-					pt = conn.prepareStatement(query);
-					pt.setString(1, the_question);
-					pt.setString(2, optA);
-					pt.setString(3, optB);
-					pt.setString(4, optC);
-					pt.setString(5, optD);
-					pt.setInt(6, Integer.parseInt(the_point));
-					pt.execute();
-
-//						query = "INSERT INTO Questions VALUES ('A', 'B', 'C', 'D', 'E', 3);";
-//						Statement st = conn.createStatement();
-//						st.execute(query);
-
-					question.setText("");
-					correctOption.setText("");
-					option2.setText("");
-					option3.setText("");
-					option4.setText("");
-					points.setText("");
-
-					JOptionPane.showMessageDialog(null, "Added successfully...");
-				} catch (SQLException ex) {
-					System.out.println(ex.getMessage());
-				}
 			}
 		});
 
@@ -147,6 +121,7 @@ public class AddQuestion extends JFrame {
 		setTitle("Add Question");
 		setSize(new Dimension(500, 500));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setLocationRelativeTo(null);
 
 	}
 
@@ -161,6 +136,36 @@ public class AddQuestion extends JFrame {
 
 	public static void main(String[] args) {
 		new AddQuestion();
+	}
+
+	private void insertIntoTable(String the_question, String optA, String optB, String optC, String optD,
+			String the_point, String query) {
+		try {
+			pt = conn.prepareStatement(query);
+			pt.setString(1, the_question);
+			pt.setString(2, optA);
+			pt.setString(3, optB);
+			pt.setString(4, optC);
+			pt.setString(5, optD);
+			pt.setInt(6, Integer.parseInt(the_point));
+			pt.execute();
+
+//				query = "INSERT INTO Questions VALUES ('A', 'B', 'C', 'D', 'E', 3);";
+//				Statement st = conn.createStatement();
+//				st.execute(query);
+
+			question.setText("");
+			correctOption.setText("");
+			option2.setText("");
+			option3.setText("");
+			option4.setText("");
+			points.setText("");
+
+			JOptionPane.showMessageDialog(null, "Added successfully...");
+		} catch (SQLException ex) {
+			System.out.println(ex.getMessage());
+		}
+	
 	}
 
 }
