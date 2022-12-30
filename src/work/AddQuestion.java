@@ -10,7 +10,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.regex.Pattern;
 
 import javax.swing.ButtonGroup;
@@ -19,31 +18,45 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.text.Caret;
 
-public class AddQuestion extends JFrame {
+public class AddQuestion extends JFrame implements ActionListener {
 
-	JTextField question, correctOption, option2, option3, option4, points;
+	JTextField qst, correctOption, option2, option3, option4, points;
+	JTextArea question;
 	JPanel questionPanel, answerPanel, container;
 	ButtonGroup bg;
 	JButton submit;
 	Statement st;
 	PreparedStatement pt;
 	Connection conn;
+	Font font;
 
 	public AddQuestion() {
+		
+		font = new Font("MV Boli", Font.PLAIN, 20);
 
 		conn = Loader.loadSql();
 
-		question = MyTextField();
-		question.setText("ertyuiooiuyt");
+		qst = MyTextField();
+		qst.setText("ertyuiooiuyt");
+		
+		question = new JTextArea(5, 25);
+		question.setBackground(qst.getBackground());
+		question.setForeground(Color.white);
+		question.setFont(font);
+		Caret caret = qst.getCaret();
+		question.setCaret(caret);
+		question.setCaretColor(Color.GREEN);
 
 		JLabel questionLabel = new JLabel("Question:");
 
 		questionPanel = new JPanel();
 		questionPanel.add(questionLabel);
 		questionPanel.add(question);
+//		questionPanel.add(qst);
 
 		JLabel correctOptionLabel = new JLabel("Correct option:");
 		correctOption = MyTextField();
@@ -80,34 +93,7 @@ public class AddQuestion extends JFrame {
 
 		submit = new JButton("Submit");
 		submit.setFocusable(false);
-		submit.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-
-				String the_question = question.getText();
-				String optA = correctOption.getText();
-				String optB = option2.getText();
-				String optC = option3.getText();
-				String optD = option4.getText();
-				String the_point = points.getText();
-
-				if (the_question.isBlank() || optA.isBlank() || optB.isBlank() || optC.isBlank() || optD.isBlank()
-						|| the_point.isBlank()) {
-					JOptionPane.showMessageDialog(null, "All fields should be filled");
-				} else if (!Pattern.matches("[1-5]", the_point)) {
-					JOptionPane.showMessageDialog(null, "Only values 1 - 5 alloweds");
-				} else if (optA.equals(optB) || optA.equals(optC) || optA.equals(optD)
-						|| optB.equals(optC) || optB.equals(optD) || optC.equals(optD)) {
-					JOptionPane.showMessageDialog(null, "Duplicate options not allowed");
-				} else {
-
-					String query = "INSERT INTO Questions VALUES (?, ?, ?, ?, ?, ?);";
-					insertIntoTable(the_question, optA, optB, optC, optD, the_point, query);
-
-				}
-
-			}
-		});
+		submit.addActionListener(this);
 
 		container = new JPanel();
 		container.setLayout(new GridLayout(3, 1));
@@ -130,7 +116,7 @@ public class AddQuestion extends JFrame {
 		txtField.setBackground(Color.black);
 		txtField.setForeground(Color.green);
 		txtField.setCaretColor(Color.pink);
-		txtField.setFont(new Font("MV Boli", Font.PLAIN, 20));
+		txtField.setFont(font);
 		return txtField;
 	}
 
@@ -163,9 +149,36 @@ public class AddQuestion extends JFrame {
 
 			JOptionPane.showMessageDialog(null, "Added successfully...");
 		} catch (SQLException ex) {
-			System.out.println(ex.getMessage());
+			JOptionPane.showMessageDialog(null, ex.getMessage());
 		}
-	
+
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+
+		String the_question = question.getText();
+		String optA = correctOption.getText();
+		String optB = option2.getText();
+		String optC = option3.getText();
+		String optD = option4.getText();
+		String the_point = points.getText();
+
+		if (the_question.isBlank() || optA.isBlank() || optB.isBlank() || optC.isBlank() || optD.isBlank()
+				|| the_point.isBlank()) {
+			JOptionPane.showMessageDialog(null, "All fields should be filled");
+		} else if (!Pattern.matches("[1-5]", the_point)) {
+			JOptionPane.showMessageDialog(null, "Only values 1 - 5 alloweds");
+		} else if (optA.equals(optB) || optA.equals(optC) || optA.equals(optD) || optB.equals(optC) || optB.equals(optD)
+				|| optC.equals(optD)) {
+			JOptionPane.showMessageDialog(null, "Duplicate options not allowed");
+		} else {
+
+			String query = "INSERT INTO Questions VALUES (?, ?, ?, ?, ?, ?);";
+			insertIntoTable(the_question, optA, optB, optC, optD, the_point, query);
+
+		}
+
 	}
 
 }

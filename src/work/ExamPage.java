@@ -130,6 +130,7 @@ public class ExamPage extends JFrame {
 
 	}
 
+	
 	private void populateQuestion(ResultSet rs) throws SQLException {
 
 		if (rs.next()) {
