@@ -10,6 +10,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -161,7 +162,8 @@ public class ExamPage extends JFrame {
 		} else {
 //			String line1 = "";
 			double res = (double) pointsGained / totalPoints * 100;
-			JOptionPane.showMessageDialog(null, "Result is: " + res + "%");
+			DecimalFormat format = new DecimalFormat(".00");
+			JOptionPane.showMessageDialog(null, "Result is: " + format.format(res) + "%");
 			loadQuestion();
 		}
 
