@@ -36,7 +36,6 @@ public class ExamPage extends JFrame {
 	String correctOption, userOption;
 	int points, pointsGained = 0, totalPoints = 0;
 	ResultSet rs = null;
-	
 
 	ArrayList<JRadioButton> buttons = new ArrayList<>();
 
@@ -77,7 +76,7 @@ public class ExamPage extends JFrame {
 					return;
 				}
 				try {
-					if (userOption.equals(correctOption)) 
+					if (userOption.equals(correctOption))
 						pointsGained += points;
 					populateQuestion(rs);
 				} catch (SQLException e1) {
@@ -109,7 +108,7 @@ public class ExamPage extends JFrame {
 	}
 
 	private void loadQuestion() {
-		
+
 		pointsGained = 0;
 		totalPoints = 0;
 
@@ -121,7 +120,6 @@ public class ExamPage extends JFrame {
 				System.exit(0);
 				return;
 			}
-				
 
 			populateQuestion(rs);
 
@@ -131,7 +129,6 @@ public class ExamPage extends JFrame {
 
 	}
 
-	
 	private void populateQuestion(ResultSet rs) throws SQLException {
 
 		if (rs.next()) {
@@ -144,10 +141,10 @@ public class ExamPage extends JFrame {
 			points = rs.getInt("points");
 
 			totalPoints += points;
-			
+
 			questionTxt.setText(question);
 
-			String [] options = { correctOption, option2, option3, option4 };
+			String[] options = { correctOption, option2, option3, option4 };
 			ArrayList<String> optionsList = new ArrayList<>(Arrays.asList(options));
 
 			for (JRadioButton btn : buttons) {
